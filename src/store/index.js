@@ -38,6 +38,20 @@ export const store = new Vuex.Store({
         createMeetup(state, payload) {
             state.loadedMeetups.push(payload)
         },
+        updateMeetup(state, payload) {
+            const meetup = state.loadedMeetups.find(meetup => {
+                return meetup.id === payload.id
+            })
+            if (payload.title) {
+                meetup.title = payload.title
+            }
+            if (payload.description) {
+                meetup.description = payload.description
+            }
+            if (payload.date) {
+                meetup.date = payload.date
+            }
+        },
         setUser(state, payload) {
             state.user = payload
         },
@@ -65,6 +79,7 @@ export const store = new Vuex.Store({
                             description: obj[key].description,
                             imageUrl: obj[key].imageUrl,
                             data: obj[key].data,
+                            location: obj[key].location,
                             creatorId: obj[key].creatorId
                         })
                     }
@@ -84,7 +99,7 @@ export const store = new Vuex.Store({
                 title: payload.title,
                 location: payload.location,
                 description: payload.description,
-                date: payload.date,
+                date: payload.date.toISOString(),
                 creatorId: getters.user.id
             }
             let imageUrl
@@ -114,6 +129,28 @@ export const store = new Vuex.Store({
                     console.log(error)
                 })
                 // Reach out to firebase and store it
+        },
+        updateMeetupData({ commit }, payload) {
+            commit('setLoading', true)
+            const updateObj = {}
+            if (payload.title) {
+                updateObj.title = payload.title
+            }
+            if (payload.description) {
+                updateObj.description = payload.description
+            }
+            if (payload.date) {
+                updateObj.date = payload.date
+            }
+            firebase.database().ref('meetups').child(payload.id).update(updateObj)
+                .then(() => {
+                    commit('setLoading', false)
+                    commit('updateMeetup', payload)
+                })
+                .catch(error => {
+                    console.log(error)
+                    commit('setLoading', false)
+                })
         },
         signUserUp({ commit }, payload) {
             commit('setLoading', true)
