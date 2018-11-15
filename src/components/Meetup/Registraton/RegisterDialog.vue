@@ -1,5 +1,5 @@
 <template>
-    <v-dialog persistent v-model="registerDialog">
+    <v-dialog primary persistent v-model="registerDialog">
         <v-btn accent slot="activator">
             {{ userIsRegistered ? 'Unregister' : 'Register' }}
         </v-btn>
@@ -46,8 +46,12 @@ export default {
         }
     },
     methods: {
-        onAgree() {
-
+        onAgree () {
+            if  (this.userIsRegistered) {
+                this.$store.dispatch('unregisterUserFromMeetup', this.meetupId)
+            } else {
+                this.$store.dispatch('registerUserForMeetup', this.meetupId)
+            }
         }
     }
 }
