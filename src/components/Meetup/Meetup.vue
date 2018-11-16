@@ -40,8 +40,9 @@
                      </v-card-text>
                      <v-card-actions>
                          <v-spacer></v-spacer>
-                        <app-meetup-register-dialog :meetupId="meetupId">
-
+                        <app-meetup-register-dialog 
+                        :meetupId="meetup.id"
+                        v-if="userIsAuthenticated && !userIsCreatore">
                         </app-meetup-register-dialog>
                      </v-card-actions>
                 </v-card>
